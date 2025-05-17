@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Connected Speech Quiz</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; max-width: 700px; margin: auto; }
+    .question { margin-bottom: 20px; }
+    .option { border: 1px solid #ccc; padding: 10px; border-radius: 5px; margin-top: 5px; cursor: pointer; }
+    .correct { background-color: #e6ffe6; border-color: #00cc66; }
+    .incorrect { background-color: #ffe6e6; border-color: #cc0000; }
+    .feedback { font-weight: bold; margin-top: 10px; }
+    input[type="text"] { width: 100%; padding: 10px; margin-top: 10px; }
+    button { padding: 10px 15px; margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+  <h1>Connected Speech Practice</h1>
+
+  <!-- 🟠 QUIZ 1: MCQ -->
+  <div class="question" id="mcq-section">
+    <h2>1. Listen and choose the phrase that contains assimilation</h2>
+    <audio controls src="https://files.catbox.moe/v8zqsn.mp3"></audio>
+    <div id="mcq-options">
+      <div class="option" onclick="selectMCQ(0)">a. Could you</div>
+      <div class="option" onclick="selectMCQ(1)">b. you help</div>
+      <div class="option" onclick="selectMCQ(2)">c. help me</div>
+      <div class="option" onclick="selectMCQ(3)">d. me please</div>
+    </div>
+    <button onclick="submitMCQ()">Submit</button>
+    <div class="feedback" id="mcq-feedback"></div>
+  </div>
+
+  <hr />
+
+  <!-- 🟢 QUIZ 2: TRANSCRIBE -->
+  <div class="question">
+    <h2>2. Listen and transcribe what you hear</h2>
+    <audio controls src="https://files.catbox.moe/x1ktdn.mp3"></audio>
+    <input type="text" id="transcribe-input" placeholder="Type what you hear here..." />
+    <button onclick="submitTranscribe()">Submit</button>
+    <div class="feedback" id="transcribe-feedback"></div>
+  </div>
+
+<script>
+  // --- MCQ ---
+  let selectedMCQ = null;
+  const correctIndex = 0;
+
+  function selectMCQ(index) {
+    selectedMCQ = index;
+    const options = document.querySelectorAll('#mcq-options .option');
+    options.forEach((opt, i) => {
+      opt.classList.remove('correct', 'incorrect');
+      opt.style.borderColor = '#ccc';
+    });
+    options[index].style.borderColor = 'blue';
+  }
+
+  function submitMCQ() {
+    if (selectedMCQ === null) return alert("Please select an option.");
+    const options = document.querySelectorAll('#mcq-options .option');
+    options[selectedMCQ].classList.add(selectedMCQ === correctIndex ? 'correct' : 'incorrect');
+    const fb = document.getElementById("mcq-feedback");
+    fb.innerText = selectedMCQ === correctIndex
+      ? "✅ Correct! 'Could you' is pronounced /kʊʤuː/ due to assimilation"
+      : "❌ Incorrect. The correct answer is 'Could you' → /kʊʤuː/";
+  }
+
+  // --- Transcription ---
+  const correctTranscription = "what's your name";
+
+  function normalize(str) {
+    return str.toLowerCase().replace(/[.,?!']/g, '').trim();
+  }
+
+  function submitTranscribe() {
+    const input = document.getElementById("transcribe-input").value;
+    const feedback = document.getElementById("transcribe-feedback");
+    if (normalize(input) === normalize(correctTranscription)) {
+      feedback.innerHTML = "✅ Correct!";
+    } else {
+      feedback.innerHTML = `
+        ❌ Not quite.<br/>
+        🔁 Try listening again or here's the correct sentence:<br/>
+        <strong>“What's your name?”</strong><br/>
+        Assimilation: ‘What’s your’ → /wɒʧə/`;
+    }
+  }
+</script>
+</body>
+</html>
